@@ -1,0 +1,425 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>CS 383</title><meta name="generator" content="MATLAB 9.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-26"><meta name="DC.source" content="aed84_hw2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>CS 383</h1><!--introduction--><p>Alan Davis Assignment 1 - Part 1</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Clear All</a></li><li><a href="#2">Data</a></li><li><a href="#3">Random k Value</a></li><li><a href="#4">Run Function</a></li><li><a href="#5">Functions</a></li></ul></div><h2 id="1">Clear All</h2><pre class="codeinput">clear, clc, close <span class="string">all</span>
+</pre><h2 id="2">Data</h2><pre class="codeinput">data = xlsread(<span class="string">'diabetes.csv'</span>);
+X = data(:,2:9);
+Y = data(:,1);
+</pre><h2 id="3">Random k Value</h2><pre class="codeinput">rng(0);
+</pre><h2 id="4">Run Function</h2><pre class="codeinput">myKMeans(X,6,Y);
+</pre><h2 id="5">Functions</h2><pre class="codeinput"><span class="keyword">function</span> myKMeans(X,k,Y)
+<span class="comment">% Simply standardizes the data in preparation of performing PCA on the</span>
+<span class="comment">% data. Also, removing the first column which is null.</span>
+Xm = mean(X);
+Xs = std(X);
+
+X_std = X - repmat(Xm,size(X,1),1);
+X_std = X ./ repmat(Xs,size(X,1),1);
+
+Ym = mean(Y);
+Ys = std(Y);
+
+Y_std = Y - repmat(Ym,size(Y,1),1);
+Y_std = Y ./ repmat(Ys,size(Y,1),1);
+
+X_std(:,1) = [];
+Y_std(:,1) = [];
+
+<span class="comment">% For Video</span>
+finMat = [];
+
+<span class="comment">% Rows and Cols</span>
+[rows, cols] = size(X_std);
+
+<span class="comment">% Colors</span>
+colors = [<span class="string">'b'</span>,<span class="string">'r'</span>,<span class="string">'g'</span>,<span class="string">'y'</span>,<span class="string">'c'</span>,<span class="string">'m'</span>,<span class="string">'k'</span>];
+
+<span class="comment">% Dimensionality Reduction &amp; Cluster Formation</span>
+<span class="keyword">if</span> size(X_std,2) &gt; 3
+    coeff = pca(X_std);
+    reduce = coeff(:,1:3);
+    X_std = X_std * reduce;
+<span class="keyword">end</span>
+
+<span class="comment">% Hard Coding that k will only be 1-7</span>
+<span class="keyword">if</span> k &gt; 7
+    k = 7;
+<span class="keyword">end</span>
+
+<span class="comment">% Means</span>
+index = randperm(rows,k); <span class="comment">%Vector of k random numbers</span>
+means = [];
+<span class="keyword">for</span> i = 1:length(index) <span class="comment">%Vectorize starting means</span>
+    means = [means;X_std(index(i),:)];
+<span class="keyword">end</span>
+
+<span class="comment">% Making Clusters</span>
+change = 1;
+iter = 0;
+
+<span class="comment">% While loop that controls the figure output</span>
+<span class="keyword">while</span> change &gt; 2^-23
+    <span class="comment">% Initialize iteration and distance matrix</span>
+    iter = iter + 1;
+    dist = [];
+
+    <span class="comment">% Iterate through to find the new distance calculation</span>
+    <span class="keyword">for</span> i = 1:k
+        calc = [];
+        <span class="keyword">for</span> j = 1:rows
+            calc = [calc; norm(means(i,:)-X_std(j,:))];
+        <span class="keyword">end</span>
+        dist = [dist calc];
+    <span class="keyword">end</span>
+
+    <span class="comment">% Cluster creation</span>
+    C(1:rows,1:3,1:k) = 0;
+    <span class="comment">% Iterarte and find points in standardized X to append to C</span>
+    <span class="keyword">for</span> i = 1:rows
+        [v,index2] = min(dist(i,:));
+        C(i,:,index2) = X_std(i,:);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Initialize the cluster purity and purity</span>
+    cpurity = 0; purity = 0;
+
+    <span class="comment">% Iterate k times for every cluster</span>
+    <span class="comment">% Copy each cluster into temp</span>
+    <span class="keyword">for</span> i = 1:k
+        temp = [C(:,:,i) Y];
+        holder = [];
+        <span class="comment">% For loop to remove zero vectors or combine two matrices</span>
+        <span class="keyword">for</span> j = 1:rows
+            <span class="keyword">if</span> temp(j,1) == 0 &amp;&amp; temp(j,2) == 0 &amp;&amp; temp(j,3) == 0
+                <span class="keyword">continue</span>
+            <span class="keyword">else</span>
+                holder = [holder;temp(j,:)];
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        <span class="comment">% Count the amount of negative and positive rows</span>
+        one = sum(holder(:,4) == 1);
+        negone = sum(holder(:,4) == -1);
+        <span class="comment">% Purity calculations</span>
+        purity = purity + max(one,negone);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Final Purity for the iteration</span>
+    purity = purity / rows;
+
+    <span class="comment">% Plot Clusters</span>
+    figTitle = [<span class="string">'Iteration '</span>,num2str(iter),<span class="string">' -'</span>,<span class="string">' Purity = '</span>,num2str(purity)];
+
+    <span class="comment">% Allow for all to be on figure 1 by clearing the figure</span>
+    clf
+
+    <span class="comment">% For every Cluster</span>
+    <span class="comment">% Assign a color and plot</span>
+    <span class="keyword">for</span> i = 1:k
+        color = colors(i);
+        scatter3(C(:,1,i),C(:,2,i),C(:,3,i),36,color,<span class="string">'x'</span>) <span class="comment">%Plot Cluster i</span>
+        hold <span class="string">on</span>
+        scatter3(means(i,1),means(i,2),means(i,3),75,<span class="string">'MarkerEdgeColor'</span>,<span class="string">'k'</span>,<span class="string">'MarkerFaceColor'</span>,color); <span class="comment">%Plot Mean in Same Color</span>
+        title(figTitle);
+    <span class="keyword">end</span>
+
+    <span class="comment">%Save Plots</span>
+    <span class="keyword">if</span> ~exist(<span class="string">'plots'</span>, <span class="string">'dir'</span>)   <span class="comment">%Create Plots Folder and Add to Work Directory</span>
+       mkdir(<span class="string">'plots'</span>)
+       addpath(<span class="string">'plots'</span>)
+    <span class="keyword">end</span>
+
+    finName = [<span class="string">'plots/figure'</span>,num2str(iter),<span class="string">'.jpg'</span>]; <span class="comment">%Name the plots and add them to the library</span>
+    finMat = [finMat;string(finName)];
+    saveas(figure(1),finName)
+
+    <span class="comment">%Calculate new means</span>
+    temp2 = means;
+    means = [];
+
+    <span class="comment">% Hold cluster in temporary place</span>
+    <span class="keyword">for</span> i = 1:k
+        temp = C(:,:,i);
+        temp = temp(any(temp,2),:);
+        means = [means;mean(temp)];
+    <span class="keyword">end</span>
+
+    change = 0;
+    <span class="keyword">for</span> i = 1:k
+        Di = (means(i,1)-temp2(i,1))+(means(i,2)-temp2(i,2))+(means(i,3)-temp2(i,3));
+        change = change + Di;
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+    <span class="comment">% Construct Video</span>
+    <span class="comment">% Video will be named</span>
+    name = [<span class="string">'K_'</span>,num2str(k),<span class="string">'_F_all'</span>];
+    output = VideoWriter(name, <span class="string">'MPEG-4'</span>);
+    output.FrameRate = 1;
+    open(output);
+    [img,c] = size(finMat);
+    <span class="keyword">for</span> o=1:img
+      I = imread(char(finMat(o)));
+      writeVideo(output,I);
+    <span class="keyword">end</span>
+    close(output);
+
+    <span class="keyword">if</span> exist(<span class="string">'plots'</span>, <span class="string">'dir'</span>)
+       rmdir(<span class="string">'plots'</span>,<span class="string">'s'</span>)
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Warning: The video's width and height has been padded to be a
+multiple of two as required by the H.264 codec. 
+Warning: Removed
+'C:\Users\Alanedavis\Documents\GitHub\CS383\HW2\plots' from the
+MATLAB path for this MATLAB session.
+	See 'doc path' for more information. 
+</pre><img vspace="5" hspace="5" src="aed84_hw2_01.png" alt=""> <p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% CS 383
+% Alan Davis
+% Assignment 1 - Part 1
+
+%% Clear All
+clear, clc, close all
+
+%% Data
+data = xlsread('diabetes.csv');
+X = data(:,2:9);
+Y = data(:,1);
+
+%% Random k Value
+rng(0);
+       
+%% Run Function
+myKMeans(X,6,Y);
+
+%% Functions
+function myKMeans(X,k,Y)
+% Simply standardizes the data in preparation of performing PCA on the
+% data. Also, removing the first column which is null.
+Xm = mean(X);
+Xs = std(X);
+
+X_std = X - repmat(Xm,size(X,1),1);
+X_std = X ./ repmat(Xs,size(X,1),1);
+
+Ym = mean(Y);
+Ys = std(Y);
+
+Y_std = Y - repmat(Ym,size(Y,1),1);
+Y_std = Y ./ repmat(Ys,size(Y,1),1);
+
+X_std(:,1) = [];
+Y_std(:,1) = [];
+
+% For Video
+finMat = [];
+
+% Rows and Cols
+[rows, cols] = size(X_std);
+
+% Colors
+colors = ['b','r','g','y','c','m','k'];
+
+% Dimensionality Reduction & Cluster Formation
+if size(X_std,2) > 3
+    coeff = pca(X_std);
+    reduce = coeff(:,1:3);
+    X_std = X_std * reduce;
+end
+
+% Hard Coding that k will only be 1-7
+if k > 7
+    k = 7;
+end
+
+% Means
+index = randperm(rows,k); %Vector of k random numbers
+means = [];
+for i = 1:length(index) %Vectorize starting means
+    means = [means;X_std(index(i),:)];
+end
+
+% Making Clusters
+change = 1;
+iter = 0;
+
+% While loop that controls the figure output
+while change > 2^-23
+    % Initialize iteration and distance matrix
+    iter = iter + 1;
+    dist = [];
+
+    % Iterate through to find the new distance calculation
+    for i = 1:k
+        calc = [];
+        for j = 1:rows
+            calc = [calc; norm(means(i,:)-X_std(j,:))];
+        end
+        dist = [dist calc];
+    end
+
+    % Cluster creation
+    C(1:rows,1:3,1:k) = 0;
+    % Iterarte and find points in standardized X to append to C
+    for i = 1:rows 
+        [v,index2] = min(dist(i,:));
+        C(i,:,index2) = X_std(i,:);
+    end
+
+    % Initialize the cluster purity and purity
+    cpurity = 0; purity = 0;
+
+    % Iterate k times for every cluster
+    % Copy each cluster into temp
+    for i = 1:k
+        temp = [C(:,:,i) Y];
+        holder = [];
+        % For loop to remove zero vectors or combine two matrices
+        for j = 1:rows
+            if temp(j,1) == 0 && temp(j,2) == 0 && temp(j,3) == 0
+                continue
+            else
+                holder = [holder;temp(j,:)];
+            end
+        end
+        % Count the amount of negative and positive rows
+        one = sum(holder(:,4) == 1);
+        negone = sum(holder(:,4) == -1);
+        % Purity calculations
+        purity = purity + max(one,negone);
+    end
+    
+    % Final Purity for the iteration
+    purity = purity / rows;
+
+    % Plot Clusters
+    figTitle = ['Iteration ',num2str(iter),' -',' Purity = ',num2str(purity)];
+    
+    % Allow for all to be on figure 1 by clearing the figure
+    clf
+
+    % For every Cluster
+    % Assign a color and plot
+    for i = 1:k
+        color = colors(i);
+        scatter3(C(:,1,i),C(:,2,i),C(:,3,i),36,color,'x') %Plot Cluster i
+        hold on
+        scatter3(means(i,1),means(i,2),means(i,3),75,'MarkerEdgeColor','k','MarkerFaceColor',color); %Plot Mean in Same Color
+        title(figTitle);
+    end
+
+    %Save Plots 
+    if ~exist('plots', 'dir')   %Create Plots Folder and Add to Work Directory
+       mkdir('plots')
+       addpath('plots')
+    end
+    
+    finName = ['plots/figure',num2str(iter),'.jpg']; %Name the plots and add them to the library
+    finMat = [finMat;string(finName)];
+    saveas(figure(1),finName)
+
+    %Calculate new means
+    temp2 = means;       
+    means = [];
+    
+    % Hold cluster in temporary place
+    for i = 1:k
+        temp = C(:,:,i);
+        temp = temp(any(temp,2),:);
+        means = [means;mean(temp)];
+    end
+
+    change = 0;
+    for i = 1:k
+        Di = (means(i,1)-temp2(i,1))+(means(i,2)-temp2(i,2))+(means(i,3)-temp2(i,3));
+        change = change + Di;
+    end
+
+end
+
+    % Construct Video
+    % Video will be named
+    name = ['K_',num2str(k),'_F_all'];
+    output = VideoWriter(name, 'MPEG-4');
+    output.FrameRate = 1;
+    open(output);
+    [img,c] = size(finMat);
+    for o=1:img
+      I = imread(char(finMat(o)));
+      writeVideo(output,I);
+    end
+    close(output);
+
+    if exist('plots', 'dir')
+       rmdir('plots','s')
+    end
+end
+##### SOURCE END #####
+--></body></html>
